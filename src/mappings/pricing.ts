@@ -5,9 +5,9 @@ import { ZERO_BD, factoryContract, ADDRESS_ZERO, ONE_BD } from './helpers'
 
 const WBNB_ADDRESS = '0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c'
 // New Stablecoin pair needed!
-const BUSD_WBNB_PAIR = '0xe9527c5ae16c0e2967ed8b967a7126a991b8903d' // replaced USDC, created 1591387
+const BUSD_WBNB_PAIR = '0x9f735342531c15f605d87a7b1d8911142d6515cb' // replaced USDC, created 1591387
 // const DAI_WBNB_PAIR = '0xc7465f6fe2ef6f97a82fffb290f4b695a5c349d4' // created block 1733370
-const USDT_WBNB_PAIR = '0x6d09d1344b50dc452946234633b3bc85cf3d191f' // created block 1587531
+const USDT_WBNB_PAIR = '0x1083a3f8a0b659d1a03c624c17a37205bb0d5a64' // created block 1587531
 
 export function getBnbPriceInUSD(): BigDecimal {
   // fetch eth prices for each stablecoin

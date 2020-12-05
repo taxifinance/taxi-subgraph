@@ -1,6 +1,6 @@
 specVersion: 0.0.3
-description: Uniscam is a decentralized protocol for automated token exchange on Ethereum And BSC.
-repository: https://github.com/Andoromeda-Foundation/uniscam-bsc-subgraph
+description: Taxi is a decentralized protocol for automated token exchange on Ethereum And BSC.
+repository: https://github.com/taxifinance/taxi-subgraph
 schema:
   file: ./schema.graphql
 dataSources:
@@ -8,9 +8,9 @@ dataSources:
     name: Factory
     network: mainnet # BSCGraph 改为 mainnet
     source:
-      address: '0x32CE36F6eA8d97f9fC19Aab83b9c6D2F52D74470' #换 Factory 合约记得换这个
+      address: '0x7C88bacc07d2F0f2bA506E0eAD9d99F618482Ecf' #换 Factory 合约记得换这个
       abi: Factory
-      startBlock: 1998981 #换合约记得换这个
+      startBlock: 2624164 #换合约记得换这个
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.3
