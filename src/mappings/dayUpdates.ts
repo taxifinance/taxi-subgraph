@@ -1,17 +1,17 @@
 import { PairHourData } from './../types/schema'
 /* eslint-disable prefer-const */
 import { BigInt, BigDecimal, EthereumEvent } from '@graphprotocol/graph-ts'
-import { Pair, Bundle, Token, UniswapFactory, UniswapDayData, PairDayData, TokenDayData } from '../types/schema'
+import { Pair, Bundle, Token, TaxiswapFactory, TaxiswapDayData, PairDayData, TokenDayData } from '../types/schema'
 import { ONE_BI, ZERO_BD, ZERO_BI, FACTORY_ADDRESS } from './helpers'
 
-export function updateUniswapDayData(event: EthereumEvent): UniswapDayData {
-  let taxiswap = UniswapFactory.load(FACTORY_ADDRESS)
+export function updateTaxiswapDayData(event: EthereumEvent): TaxiswapDayData {
+  let taxiswap = TaxiswapFactory.load(FACTORY_ADDRESS)
   let timestamp = event.block.timestamp.toI32()
   let dayID = timestamp / 86400
   let dayStartTimestamp = dayID * 86400
-  let taxiswapDayData = UniswapDayData.load(dayID.toString())
+  let taxiswapDayData = TaxiswapDayData.load(dayID.toString())
   if (taxiswapDayData === null) {
-    taxiswapDayData = new UniswapDayData(dayID.toString())
+    taxiswapDayData = new TaxiswapDayData(dayID.toString())
     taxiswapDayData.date = dayStartTimestamp
     taxiswapDayData.dailyVolumeUSD = ZERO_BD
     taxiswapDayData.dailyVolumeETH = ZERO_BD
@@ -25,7 +25,7 @@ export function updateUniswapDayData(event: EthereumEvent): UniswapDayData {
   taxiswapDayData.txCount = taxiswap.txCount
   taxiswapDayData.save()
 
-  return taxiswapDayData as UniswapDayData
+  return taxiswapDayData as TaxiswapDayData
 }
 
 export function updatePairDayData(event: EthereumEvent): PairDayData {

@@ -4,9 +4,9 @@ import { BigInt, BigDecimal, store, Address } from '@graphprotocol/graph-ts'
 import {
   Pair,
   Token,
-  UniswapFactory,
+  TaxiswapFactory,
   Transaction,
-  UniswapDayData,
+  TaxiswapDayData,
   PairDayData,
   TokenDayData,
   Mint as MintEvent,
@@ -15,7 +15,7 @@ import {
   Bundle
 } from '../types/schema'
 import { Pair as PairContract, Mint, Burn, Swap, Transfer, Sync, DummyMint, FeeUpdated, Deposited0Updated, Deposited1Updated } from '../types/templates/Pair/Pair'
-import { updatePairDayData, updateTokenDayData, updateUniswapDayData, updatePairHourData } from './dayUpdates'
+import { updatePairDayData, updateTokenDayData, updateTaxiswapDayData, updatePairHourData } from './dayUpdates'
 import { getBnbPriceInUSD, findEthPerToken, getTrackedVolumeUSD, getTrackedLiquidityUSD } from './pricing'
 import {
   convertTokenToDecimal,
@@ -39,7 +39,7 @@ export function handleTransfer(event: Transfer): void {
     return
   }
 
-  let factory = UniswapFactory.load(FACTORY_ADDRESS)
+  let factory = TaxiswapFactory.load(FACTORY_ADDRESS)
   let transactionHash = event.transaction.hash.toHexString()
 
   // user stats
@@ -218,7 +218,7 @@ export function handleSync(event: Sync): void {
   let pair = Pair.load(event.address.toHex())
   let token0 = Token.load(pair.token0)
   let token1 = Token.load(pair.token1)
-  let taxiswap = UniswapFactory.load(FACTORY_ADDRESS)
+  let taxiswap = TaxiswapFactory.load(FACTORY_ADDRESS)
 
   // reset factory liquidity by subtracting onluy tarcked liquidity
   taxiswap.totalLiquidityETH = taxiswap.totalLiquidityETH.minus(pair.trackedReserveETH as BigDecimal)
@@ -249,7 +249,7 @@ export function handleMint(event: Mint): void {
   let mint = MintEvent.load(mints[mints.length - 1])
 
   let pair = Pair.load(event.address.toHex())
-  let taxiswap = UniswapFactory.load(FACTORY_ADDRESS)
+  let taxiswap = TaxiswapFactory.load(FACTORY_ADDRESS)
 
   let token0 = Token.load(pair.token0)
   let token1 = Token.load(pair.token1)
@@ -293,7 +293,7 @@ export function handleMint(event: Mint): void {
   // update day entities
   updatePairDayData(event)
   updatePairHourData(event)
-  updateUniswapDayData(event)
+  updateTaxiswapDayData(event)
   updateTokenDayData(token0 as Token, event)
   updateTokenDayData(token1 as Token, event)
 }
@@ -310,7 +310,7 @@ export function handleBurn(event: Burn): void {
   let burn = BurnEvent.load(burns[burns.length - 1])
 
   let pair = Pair.load(event.address.toHex())
-  let taxiswap = UniswapFactory.load(FACTORY_ADDRESS)
+  let taxiswap = TaxiswapFactory.load(FACTORY_ADDRESS)
 
   //update token info
   let token0 = Token.load(pair.token0)
@@ -355,7 +355,7 @@ export function handleBurn(event: Burn): void {
   // update day entities
   updatePairDayData(event)
   updatePairHourData(event)
-  updateUniswapDayData(event)
+  updateTaxiswapDayData(event)
   updateTokenDayData(token0 as Token, event)
   updateTokenDayData(token1 as Token, event)
 }
@@ -416,7 +416,7 @@ export function handleSwap(event: Swap): void {
   pair.save()
 
   // update global values, only used tracked amounts for volume
-  let taxiswap = UniswapFactory.load(FACTORY_ADDRESS)
+  let taxiswap = TaxiswapFactory.load(FACTORY_ADDRESS)
   taxiswap.totalVolumeUSD = taxiswap.totalVolumeUSD.plus(trackedAmountUSD)
   taxiswap.totalVolumeETH = taxiswap.totalVolumeETH.plus(trackedAmountETH)
   taxiswap.untrackedVolumeUSD = taxiswap.untrackedVolumeUSD.plus(derivedAmountUSD)
@@ -472,7 +472,7 @@ export function handleSwap(event: Swap): void {
   // update day entities
   let pairDayData = updatePairDayData(event)
   let pairHourData = updatePairHourData(event)
-  let taxiswapDayData = updateUniswapDayData(event)
+  let taxiswapDayData = updateTaxiswapDayData(event)
   let token0DayData = updateTokenDayData(token0 as Token, event)
   let token1DayData = updateTokenDayData(token1 as Token, event)
 
@@ -523,7 +523,7 @@ export function handleDummyMint(event: DummyMint): void {
   let pair = Pair.load(event.address.toHex())
   let token0 = Token.load(pair.token0)
   let token1 = Token.load(pair.token1)
-  let taxiswap = UniswapFactory.load(FACTORY_ADDRESS)
+  let taxiswap = TaxiswapFactory.load(FACTORY_ADDRESS)
 
   taxiswap.totalLiquidityETH = taxiswap.totalLiquidityETH.minus(pair.trackedReserveETH as BigDecimal)
 
@@ -544,7 +544,7 @@ export function handleDummyBurn(event: DummyMint): void {
   let pair = Pair.load(event.address.toHex())
   let token0 = Token.load(pair.token0)
   let token1 = Token.load(pair.token1)
-  let taxiswap = UniswapFactory.load(FACTORY_ADDRESS)
+  let taxiswap = TaxiswapFactory.load(FACTORY_ADDRESS)
 
   taxiswap.totalLiquidityETH = taxiswap.totalLiquidityETH.minus(pair.trackedReserveETH as BigDecimal)
 
@@ -579,7 +579,7 @@ export function handleDeposited1Updated(event: Deposited1Updated): void {
   pair.save()
 }
 
-function postProcess(pair: Pair | null, token0: Token| null, token1: Token | null, taxiswap: UniswapFactory | null): void {
+function postProcess(pair: Pair | null, token0: Token| null, token1: Token | null, taxiswap: TaxiswapFactory | null): void {
   // update ETH price now that reserves could have changed
   let bundle = Bundle.load('1')
   bundle.ethPrice = getBnbPriceInUSD()
