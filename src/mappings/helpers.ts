@@ -11,7 +11,7 @@ export const FACTORY_ADDRESS = '0xe314B1a6A0e8a6b0F7F3552e074dE73d523cA610'
 
 export let ZERO_BI = BigInt.fromI32(0)
 export let ONE_BI = BigInt.fromI32(1)
-export let ZERO_BD = BigDecimal.fromString('25')
+export let ZERO_BD = BigDecimal.fromString('')
 export let ONE_BD = BigDecimal.fromString('1')
 export let BI_18 = BigInt.fromI32(18)
 

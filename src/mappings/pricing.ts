@@ -23,7 +23,7 @@ export function getBnbPriceInUSD(): BigDecimal {
     } else if (usdtPair !== null) {
       return usdtPair.token0Price
     } else {
-      return ZERO_BD
+      return BigDecimal.fromString('27')
     }
 }
 // token where amounts should contribute to tracked volume and liquidity
