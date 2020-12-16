@@ -4,9 +4,9 @@ import { BigDecimal, Address, BigInt } from '@graphprotocol/graph-ts/index'
 import { ZERO_BD, factoryContract, ADDRESS_ZERO, ONE_BD } from './helpers'
 
 const WBNB_ADDRESS = '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c'
-const BUSD_WBNB_PAIR = '0xB66d52bf8F7fD43955b36290A619C72F495fc170'
+const BUSD_WBNB_PAIR = '0xb66d52bf8f7fd43955b36290a619c72f495fc170'
 const DAI_WBNB_PAIR = '' 
-const USDT_WBNB_PAIR = '0x9F43068d4c2B1ea16789e6B0F2f1E0Db543b394B' // created block 10093341
+const USDT_WBNB_PAIR = '0x9f43068d4c2b1ea16789e6b0f2f1e0db543b394b' // created block 10093341
 
 export function getBnbPriceInUSD(): BigDecimal {
     // fetch BNB prices for each stablecoin
@@ -14,18 +14,7 @@ export function getBnbPriceInUSD(): BigDecimal {
     let busdPair = Pair.load(BUSD_WBNB_PAIR) // busd is token1
     let daiPair = Pair.load(DAI_WBNB_PAIR) // dai is token0
   
-    // all 3 have been created
-    if (daiPair !== null && busdPair !== null && usdtPair !== null) {
-      let totalLiquidityBNB = daiPair.reserve1.plus(busdPair.reserve0).plus(usdtPair.reserve1)
-      let daiWeight = daiPair.reserve1.div(totalLiquidityBNB)
-      let busdWeight = busdPair.reserve0.div(totalLiquidityBNB)
-      let usdtWeight = usdtPair.reserve1.div(totalLiquidityBNB)
-      return daiPair.token0Price
-        .times(daiWeight)
-        .plus(busdPair.token1Price.times(busdWeight))
-        .plus(usdtPair.token0Price.times(usdtWeight))
-      // busd and usdt have been created
-    } else if (busdPair !== null && usdtPair !== null) {
+    if (busdPair !== null && usdtPair !== null) {
       let totalLiquidityBNB = busdPair.reserve0.plus(usdtPair.reserve1)
       let busdWeight = busdPair.reserve0.div(totalLiquidityBNB)
       let usdtWeight = usdtPair.reserve1.div(totalLiquidityBNB)
