@@ -1,7 +1,7 @@
 /* eslint-disable prefer-const */
 import { Pair, Token, Bundle } from '../types/schema'
 import { BigDecimal, Address, BigInt } from '@graphprotocol/graph-ts/index'
-import { ZERO_BD, factoryContract, ADDRESS_ZERO, ONE_BD } from './helpers'
+import { ZERO_BD, DEFAULT_BD, factoryContract, ADDRESS_ZERO, ONE_BD } from './helpers'
 
 const WBNB_ADDRESS = '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c'
 const BUSD_WBNB_PAIR = '0xB66d52bf8F7fD43955b36290A619C72F495fc170'
@@ -34,7 +34,7 @@ export function getBnbPriceInUSD(): BigDecimal {
     } else if (usdtPair !== null) {
       return usdtPair.token0Price
     } else {
-      return BigDecimal.fromString('29')
+      return DEFAULT_BD
     }
 }
 // token where amounts should contribute to tracked volume and liquidity
