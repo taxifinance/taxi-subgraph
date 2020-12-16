@@ -3,53 +3,45 @@ import { Pair, Token, Bundle } from '../types/schema'
 import { BigDecimal, Address, BigInt } from '@graphprotocol/graph-ts/index'
 import { ZERO_BD, factoryContract, ADDRESS_ZERO, ONE_BD } from './helpers'
 
-const WBNB_ADDRESS = '0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c'
-// New Stablecoin pair needed!
-const BUSD_WBNB_PAIR = '0x9f735342531c15f605d87a7b1d8911142d6515cb' // replaced USDC, created 1591387
-// const DAI_WBNB_PAIR = '0xc7465f6fe2ef6f97a82fffb290f4b695a5c349d4' // created block 1733370
-const USDT_WBNB_PAIR = '0x1083a3f8a0b659d1a03c624c17a37205bb0d5a64' // created block 1587531
+const WBNB_ADDRESS = '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c'
+const BUSD_WBNB_PAIR = '0xB66d52bf8F7fD43955b36290A619C72F495fc170'
+const DAI_WBNB_PAIR = '' 
+const USDT_WBNB_PAIR = '0x9F43068d4c2B1ea16789e6B0F2f1E0Db543b394B' // created block 10093341
 
 export function getBnbPriceInUSD(): BigDecimal {
-  // fetch eth prices for each stablecoin
-  // let daiPair = Pair.load(DAI_WBNB_PAIR) // dai is token0, disabled for no big liquidity
-  let busdPair = Pair.load(BUSD_WBNB_PAIR) // usdc is token0
-  let usdtPair = Pair.load(USDT_WBNB_PAIR) // usdt is token1
-
-  // all 3 have been created
-  // Disabled for no BNB/DAI Pair
-  // if (daiPair !== null && busdPair !== null && usdtPair !== null) {
-  //   // 具体看池子是哪个是 BNB 哪个是稳定币
-  //   let totalLiquidityETH = daiPair.reserve1.plus(busdPair.reserve0).plus(usdtPair.reserve1)
-  //   let daiWeight = daiPair.reserve1.div(totalLiquidityETH)
-  //   let usdcWeight = busdPair.reserve0.div(totalLiquidityETH)
-  //   let usdtWeight = usdtPair.reserve1.div(totalLiquidityETH)
-  //   return daiPair.token0Price
-  //     .times(daiWeight)
-  //     .plus(busdPair.token1Price.times(usdcWeight))
-  //     .plus(usdtPair.token0Price.times(usdtWeight))
-  //   // dai and USDC have been created
-  // } else
-  if (usdtPair !== null && busdPair !== null) {
-    let totalLiquidityETH = usdtPair.reserve1.plus(busdPair.reserve0)
-    let usdtWeight = usdtPair.reserve1.div(totalLiquidityETH)
-    let usdcWeight = busdPair.reserve0.div(totalLiquidityETH)
-    return usdtPair.token0Price.times(usdtWeight).plus(busdPair.token1Price.times(usdcWeight))
-    // USDC is the only pair so far
-  } else
-  if (busdPair !== null) {
-    return busdPair.token1Price
-  } else {
-    return ZERO_BD
-  }
+    // fetch BNB prices for each stablecoin
+    let usdtPair = Pair.load(USDT_WBNB_PAIR) // usdt is token0
+    let busdPair = Pair.load(BUSD_WBNB_PAIR) // busd is token1
+    let daiPair = Pair.load(DAI_WBNB_PAIR) // dai is token0
+  
+    // all 3 have been created
+    if (daiPair !== null && busdPair !== null && usdtPair !== null) {
+      let totalLiquidityBNB = daiPair.reserve1.plus(busdPair.reserve0).plus(usdtPair.reserve1)
+      let daiWeight = daiPair.reserve1.div(totalLiquidityBNB)
+      let busdWeight = busdPair.reserve0.div(totalLiquidityBNB)
+      let usdtWeight = usdtPair.reserve1.div(totalLiquidityBNB)
+      return daiPair.token0Price
+        .times(daiWeight)
+        .plus(busdPair.token1Price.times(busdWeight))
+        .plus(usdtPair.token0Price.times(usdtWeight))
+      // busd and usdt have been created
+    } else if (busdPair !== null && usdtPair !== null) {
+      let totalLiquidityBNB = busdPair.reserve0.plus(usdtPair.reserve1)
+      let busdWeight = busdPair.reserve0.div(totalLiquidityBNB)
+      let usdtWeight = usdtPair.reserve1.div(totalLiquidityBNB)
+      return busdPair.token1Price.times(busdWeight).plus(usdtPair.token0Price.times(usdtWeight))
+      // usdt is the only pair so far
+    } else if (usdtPair !== null) {
+      return usdtPair.token0Price
+    } else {
+      return ZERO_BD
+    }
 }
-
 // token where amounts should contribute to tracked volume and liquidity
 let WHITELIST: string[] = [
   '0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c', // WBNB
-  '0x1af3f329e8be154074d8769d1ffa4ee058b1dbc3', // Binance Peg DAI
-  '0x2170ed0880ac9a755fd29b2688956bd959f933f8', // Binance Peg ETH
-  '0xe9e7cea3dedca5984780bafc599bd69add087d56', // Binance Peg BUSD
-  '0x55d398326f99059ff775485246999027b3197955', // Binance Peg USDT
+  '0xe9e7cea3dedca5984780bafc599bd69add087d56', // BUSD
+  '0x55d398326f99059ff775485246999027b3197955', // USDT
 ]
 
 // minimum liquidity required to count towards tracked volume for pairs with small # of Lps
